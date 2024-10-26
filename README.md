@@ -10,7 +10,7 @@ Fork repo and run new workflow
 
 ### Manual Build
 
-Sync sources</br>
+Sync Sources</br>
 Reference KernelSU [how to build](https://kernelsu.org/guide/how-to-build.html)
 
 ```bash
@@ -19,19 +19,42 @@ repo init --depth 1 -u https://android.googlesource.com/kernel/manifest -b [BRAN
 repo sync
 ```
 
-#### Clone repo
+#### Clone Repo
 
 ```bash
 git clone https://github.com/TapetalArray/gki-custom
 ```
 
-#### Apply patches
+#### Apply Change
+
+Usually we need to add these options to meet the basic requirements of docker. But for GKI kernel it is a little different, check this [diff](https://github.com/TapetalArray/gki-custom/blob/main/docker-config.diff)
+
+```txt
+CONFIG_SYSVIPC=y
+CONFIG_UTS_NS=y
+CONFIG_PID_NS=y
+CONFIG_IPC_NS=y
+CONFIG_USER_NS=y
+CONFIG_NET_NS=y
+CONFIG_CGROUP_DEVICE=y
+CONFIG_CGROUP_FREEZER=y
+```
+
+You can also use this
 
 ```bash
 cp ./gki-custom/config/gki_defconfig-android12-5.10 ./android-kernel/common/arch/arm64/configs/gki_defconfig
-cd android-kernel/common
-git apply ../../gki-custom/patches/*.patch
-cd ..
+```
+
+Patch
+
+```bash
+git apply -v ../../gki-custom/patches/*.patch
+```
+
+Save
+
+```bash
 BUILD_CONFIG=common/build.config.gki.aarch64 build/config.sh savedefconfig
 ```
 
@@ -41,7 +64,8 @@ BUILD_CONFIG=common/build.config.gki.aarch64 build/config.sh savedefconfig
 LTO=thin BUILD_CONFIG=common/build.config.gki.aarch64 build/build.sh
 ```
 
-#### Create img
+#### Create Image
+
 Download [gki-release-builds](https://source.android.com/docs/core/architecture/kernel/gki-release-builds).
 
 ```bash
